@@ -61,3 +61,19 @@ src/minichat/
   controller/ chat_controller.py
   ui/    chat_app.py widgets_view.py history_html.py
 ```
+
+## Refactorizaciones (Tarea 2)
+
+Cada actividad tiene su propio commit. Después de cada cambio se ejecutó la
+lista de verificación manual; `Verificacion.ipynb` contiene la ejecución con
+el código final.
+
+| Actividad | Smell | Refactorización | Cambio |
+|---|---|---|---|
+| A1 | Cadenas mágicas | Replace Magic Literal | `core/events.py` con `Event(str, Enum)`; los literales de eventos se reemplazan por `Event.X`. Un error de tipeo ahora lanza `AttributeError`. |
+| A2 | Feature Envy | Usar el método del modelo | `_refresh_selector` usa `m.summary()` en vez de leer `timestamp`, `content` y `role`. |
+| A3 | Lista larga de parámetros | Introduce Parameter Object | `set_generation(cfg: GenerationConfig)`; las validaciones pasan a `__post_init__` y la vista usa `dataclasses.replace`, sin repetir el `900`. |
+| A4 | Método mal ubicado | Move Method | `last_assistant_text()` pasa de `app.py` a `ChatSession`. |
+| A5 | Código muerto | Remove Dead Code | Se eliminan `get_summary` (antes se redirige su único uso en `export_json` a `as_public`), `get_observer_count`, `has_observers`, `_encode_system_message` y `Role.list`. |
+| A6 | Condicional extenso | Replace Conditional with Dispatch Table | `on_event` busca el handler en `self._handlers` (un método `_on_...` por evento) e ignora eventos desconocidos. |
+| A7 | Método largo (SRP) | Extract Method | `send_user` se divide en `_validate_text` (que ahora trunca a 2000), `_generate_reply` y `_build_meta`. |
